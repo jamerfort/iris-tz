@@ -148,7 +148,6 @@ ClassMethod ConvertTz(pDt, pTz, pDestTz = "", pDestFormat As %String = "", Outpu
   }
 
   set srcFmt = ""
-  set dstFmt = ""
   set dtLen = $LENGTH(datepart)
 
   if dtLen = 14 {

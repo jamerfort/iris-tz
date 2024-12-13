@@ -334,7 +334,7 @@ ClassMethod TestHL7ConvertTz(testId, dt, inTz, outTz, outFmt = "", expectedValue
 {
   set rslt = ##class(tz.HL7).ConvertTz(dt, inTz, outTz, outFmt, .tSC, pErrOutput, pStrict)
 
-  set scText = $System.Status.GetErrorText(tSC)
+  //set scText = $System.Status.GetErrorText(tSC)
   //set ok = ""
   //set statusStatus = ..expect(testId_".Status", scText, ok)
 

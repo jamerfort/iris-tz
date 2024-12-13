@@ -149,7 +149,7 @@ ClassMethod Convert(pDt, pSrcTz, pSrcFormat = "", pDestFormat = "", pDestTz = ""
     set fmtRslt = ..DetermineFormat(pDt, pSrcTz)
     set pSrcFormat = $LISTGET(fmtRslt, 1)
     set pSrcTz = $LISTGET(fmtRslt, 2)
-    set dateOnly = $LISTGET(fmtRslt, 3)
+    //set dateOnly = $LISTGET(fmtRslt, 3)
 
     // TODO: What if the input is only a date?
 

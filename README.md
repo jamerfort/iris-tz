@@ -1,3 +1,6 @@
+[![Quality Gate Status](https://community.objectscriptquality.com/api/project_badges/measure?project=intersystems_iris_community__iris-tz&metric=alert_status&token=sqb_34e9ceb4b4645334eed851ad51f06b5e46bf27a0)](https://community.objectscriptquality.com/dashboard?id=intersystems_iris_community__iris-tz)
+[![Reliability Rating](https://community.objectscriptquality.com/api/project_badges/measure?project=intersystems_iris_community__iris-tz&metric=reliability_rating&token=sqb_34e9ceb4b4645334eed851ad51f06b5e46bf27a0)](https://community.objectscriptquality.com/dashboard?id=intersystems_iris_community__iris-tz)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat&logo=AdGuard)](LICENSE)
 
 # tz
