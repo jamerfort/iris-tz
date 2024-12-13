@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26" zv="IRIS for UNIX (Ubuntu Server LTS for x86-64 Containers) 2024.3 (Build 209U)" ts="2024-12-13 17:22:08">
+<Class name="tz.HL7">
+<Description>
+A class that converts datetimes (formatted as HL7 dates/datetimes) to the desired timezone or format.
+
+See the tz.TZ class for details on timezones and datetime formats.</Description>
+<TimeChanged>67187,35201.342332607</TimeChanged>
+<TimeCreated>67181,3344.68869993</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+// <p><code>ConvertTz()</code> converts HL7-formatted dates/datetimes to the desired timezone and/or format.</p>
+
+]]></Content>
+</UDLText>
+
+<Method name="ConvertTz">
+<Description><![CDATA[
+<h4>Arguments:</h4>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pDt</td>
+<td>The source date/datetime in HL7 format</td>
+<td>&quot;20240102033045-0600&quot;</td>
+</tr>
+<tr>
+<td>pTz</td>
+<td>The source timezone. If pDestTz is not provided, pTz will be targeted.</td>
+<td>&quot;America/New_York&quot;, &quot;America/Los_Angeles&quot;</td>
+</tr>
+<tr>
+<td>pDestTz=pTz</td>
+<td>The target timezone. If blank, use pTz.</td>
+<td>&quot;America/New_York&quot;, &quot;America/Los_Angeles&quot;</td>
+</tr>
+<tr>
+<td>pDestFormat=&quot;&quot;</td>
+<td>The target format. If blank, try to match the source format.</td>
+<td>&quot;HL7Local&quot;, &quot;HL7withOffset&quot;, &quot;&quot;, &quot;%Y-%m-%d %H:%M:%S %z&quot;</td>
+</tr>
+<tr>
+<td><em>Output</em> pStatus</td>
+<td>Reference to a new %Status variable</td>
+<td>.tSC</td>
+</tr>
+<tr>
+<td>pErrOutput=pDt</td>
+<td>Value to return on error.  By default, do not convert and return pDt.</td>
+<td>&quot;&quot;, &quot;00000000000000&quot;</td>
+</tr>
+<tr>
+<td>pStrict=0</td>
+<td>If 1 (strict), error if not HL7 format. If 0 (not strict), allow tz.Tz to attempt to parse.</td>
+<td>0, 1</td>
+</tr>
+</tbody></table>
+<h4>Result:</h4>
+<p>Return the converted HL7 date/datetime string.  If an error occurs, pErrOutput is used to determine result. (See below)</p>
+<h4>Examples:</h4>
+<pre><code class="language-cls">IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+&quot;20200102023045-0600&quot;
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;)
+20200102023045
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;, &quot;HL7WithOffset&quot;)
+&quot;20200102023045-0600&quot;
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;HL7Local&quot;)
+20200102023045
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;%Y-%m-%d %H:%M:%S %z&quot;)
+&quot;2020-01-02 02:30:45 -0600&quot;
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;&quot;, &quot;America/Chicago&quot;)
+&quot;&quot;
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;)
+20240102
+
+IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;, &quot;America/New_York&quot;)
+20240102
+</code></pre>
+<h4>Supported Input Formats:</h4>
+<p><code>ConvertTz()</code> attempts to match the given date/datetime to several HL7 formats.</p>
+<p>In general, this library defines valid HL7 dates/datetimes with the following formats:</p>
+<ul>
+<li>YYYYmmddHHMMSSÂ±zzzz</li>
+<li>YYYYmmddHHMMÂ±zzzz</li>
+<li>YYYYmmddHHÂ±zzzz</li>
+<li>YYYYmmddHHMMSSZ</li>
+<li>YYYYmmddHHMMZ</li>
+<li>YYYYmmddHHZ</li>
+<li>YYYYmmddHHMMSS</li>
+<li>YYYYmmddHHMM</li>
+<li>YYYYmmddHH</li>
+<li>YYYYmmdd</li>
+<li>YYYYmm</li>
+<li>YYYY</li>
+<li>[BLANK]</li>
+</ul>
+<p>Since the following values/formats do not have time-parts (i.e. hour, minute, etc.), they are returned as-is from <code>ConvertTz()</code>:</p>
+<ul>
+<li>Blank values</li>
+<li>YYYYMMDD</li>
+<li>YYYYMM</li>
+<li>YYYY</li>
+</ul>
+<p>If the input is not a valid HL7 date/datetime:</p>
+<ul>
+<li>If pStrict is 0, allow <code>##class(tz.Tz).Convert()</code> to attempt to parse the input.</li>
+<li>If pStrict is 1, set pStatus to an error, and process pErrOutput, as mentioned next.</li>
+</ul>
+<p>If an error occurs:</p>
+<ul>
+<li>set pStatus to the error</li>
+<li>return pErrOutput if populated</li>
+<li>If pErrOutput is not set, return pDt.</li>
+</ul>
+<h4>Output Formats:</h4>
+<p>If pDestFormat is blank, use the same format as the pDt input.</p>
+<p>If pDestFormat is &quot;HL7Local&quot;, use the &quot;%Y%m%d%H%M%S&quot; format.</p>
+<p>If pDestFormat is &quot;HL7WithOffset&quot;, use the &quot;%Y%m%d%H%M%S%z&quot; format.</p>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pTz,pDestTz="",pDestFormat:%String="",*pStatus:%Status,pErrOutput:%String="{do not convert}",pStrict:%Boolean=0</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  set pStatus = $$$OK
+
+  if pDt = "" {
+    return ""
+  }
+
+  // split the datetime and offset
+  set hasOffset = ..SplitOffset(pDt, .datepart, .offset)
+
+  // Does it end with Z, indicating UTC?
+  if (hasOffset = 0) && ($EXTRACT(datepart, *) = "Z") {
+    set datepart = $EXTRACT(datepart, 1, *-1)
+    set offset = "+0000"
+    set hasOffset = 1
+  }
+
+  // Is this a valid HL7 datetime?
+  if pStrict && ('$MATCH(datepart, "^[0-9]{4}[0-9]*$")) {
+    set pStatus = $$$ERROR($$$GeneralError, "Not an HL7 Datetime value")
+
+    if pErrOutput = "{do not convert}" {
+      set pErrOutput = pDt
+    }
+
+    return pErrOutput
+  }
+
+  set srcFmt = ""
+  set dstFmt = ""
+  set dtLen = $LENGTH(datepart)
+
+  if dtLen = 14 {
+    set srcFmt = "%Y%m%d%H%M%S"
+
+  } elseif dtLen = 12 {
+    set srcFmt = "%Y%m%d%H%M"
+
+  } elseif dtLen = 10 {
+    set srcFmt = "%Y%m%d%H"
+
+  } elseif dtLen = 8 {
+    // This is a date-only, so return original value
+    //set srcFmt = "%Y%m%d"
+    return datepart
+
+  } elseif dtLen = 6 {
+    // This is a year+month, so return original value
+    //set srcFmt = "%Y%m"
+    return datepart
+
+  } elseif dtLen = 4 {
+    // This is a year, so return original value
+    //set srcFmt = "%Y"
+    return datepart
+  }
+
+  if hasOffset && (srcFmt '= "") {
+    set srcFmt = srcFmt_"%z"
+  }
+
+  // Determine the destination format, if necessary
+  set upperDestFormat = $ZCONVERT(pDestFormat, "U")
+  if upperDestFormat = "HL7WITHOFFSET" {
+    set pDestFormat = "%Y%m%d%H%M%S%z"
+
+  } elseif upperDestFormat = "HL7LOCAL" {
+    set pDestFormat = "%Y%m%d%H%M%S"
+
+  } elseif pDestFormat = ""  {
+    set pDestFormat = srcFmt
+  }
+
+  if pDestTz = "" {
+    set pDestTz = pTz
+  }
+
+  set rslt = ##class(tz.TZ).Convert(datepart_offset, pTz, srcFmt, pDestFormat, pDestTz, .pStatus)
+
+  if $$$ISERR(pStatus) {
+    if pErrOutput = "{do not convert}" {
+      set pErrOutput = pDt
+    }
+
+    return pErrOutput
+  }
+
+  return rslt
+]]></Implementation>
+</Method>
+
+<Method name="FindOffset">
+<Description>
+Returns 0 if an offset (i.e. -0400, +0400) was not found.
+Returns an integer specifying its start position in the string.
+See $LOCATE.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pInWithOffset:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+  //set idx = $FIND(pInWithOffset, "-")
+
+  //if (idx = 0) {
+  //  // "-" not found, try "+"
+  //  set idx = $FIND(pInWithOffset, "+")
+  //}
+  //quit idx
+
+  set idx = $LOCATE(pInWithOffset, "[+-][0-9]{2}[0-9]*$")
+  quit idx
+]]></Implementation>
+</Method>
+
+<Method name="HasOffset">
+<Description>
+Returns 1 if an offset (i.e. -0400, +0400) was found. Returns 0 otherwise.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pInWithOffset:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+  if (..FindOffset(pInWithOffset) = 0) {
+    quit 0
+  } else {
+    quit 1
+  }
+]]></Implementation>
+</Method>
+
+<Method name="SplitOffset">
+<Description>
+Split an HL7 Datetime into a datetime and offset (i.e. -0400, +0400).
+
+Returns 1 if an offset was found; 0 otherwise;</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pInWithOffset,*pDatetime,*pOffset:%String</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+  set idx = ..FindOffset(pInWithOffset)
+
+  if (idx = 0) {
+    // no offset found
+    set pDatetime = pInWithOffset
+    set pOffset = ""
+    quit 0
+  }
+
+  //set pDatetime = $EXTRACT(pInWithOffset, 1, idx-2)
+  //set pOffset = $EXTRACT(pInWithOffset, idx-1,*)
+
+  set pDatetime = $EXTRACT(pInWithOffset, 1, idx-1)
+  set pOffset = $EXTRACT(pInWithOffset, idx,*)
+
+  quit 1
+]]></Implementation>
+</Method>
+
+<UDLText name="T">
+<Content><![CDATA[
+// TODO: Rewrite/reorganize the below functions
+
+]]></Content>
+</UDLText>
+
+<Method name="WithOffset">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pTz,pSrcFormat="",pDestTz=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[  quit ..ConvertTz(pDt, pTz, pSrcFormat, "HL7withOffset", pDestTz)
+]]></Implementation>
+</Method>
+
+<Method name="ToLocal">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pTz,pSrcFormat="",pDestTz=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[  quit ..ConvertTz(pDt, pTz, pSrcFormat, "HL7", pDestTz)
+]]></Implementation>
+</Method>
+
+<Method name="NowLocal">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pTz</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  set now = $ZDATETIME($HOROLOG, 3, 5)
+  set srcFmt = "%Y-%m-%dT%H:%M:%S%z"
+  quit ..ToLocal(now, pTz, srcFmt, pTz)
+]]></Implementation>
+</Method>
+
+<Method name="NowWithOffset">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pTz</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  set now = $ZDATETIME($HOROLOG, 3, 5)
+  set srcFmt = "%Y-%m-%dT%H:%M:%S%z"
+  quit ..WithOffset(now, pTz, srcFmt, pTz)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="tz.TZ">
+<Description>
+TODO: Document</Description>
+<TimeChanged>67187,15769.409717604</TimeChanged>
+<TimeCreated>67180,25738.989209696</TimeCreated>
+
+<Method name="Test">
+<Description>
+Description</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[  return ##class(tz.Tests).Run()
+]]></Implementation>
+</Method>
+
+<Method name="DetermineFormat">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pTz:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  // TODO: Handle m/d/y vs. y/d/m vs. d/m/y
+  set formats = $LISTBUILD(
+    // full date/time
+    $LB("%Y%m%d%H%M%S%z"),
+    $LB("%Y%m%d%H%M%S"),
+
+    $LB("%Y-%m-%dT%H:%M:%S"),
+    $LB("%Y-%m-%dT%H:%M:%SZ", "", "UTC"),
+    $LB("%Y-%m-%dT%H:%M:%S%z"),
+    $LB("%Y%m%dT%H%M%S"),
+    $LB("%Y%m%dT%H%M%SZ", "", "UTC"),
+    $LB("%Y%m%dT%H%M%S%z"),
+
+    $LB("%Y-%m-%d %H:%M:%S %z"),
+    //$LB("%Y-%m-%d %H:%M:%S %Z"),
+    $LB("%Y-%m-%d %H:%M:%S"),
+
+    $LB("%m/%d/%Y %H:%M:%S %z"),
+    //$LB("%m/%d/%Y %H:%M:%S %Z"),
+    $LB("%m/%d/%Y %H:%M:%S"),
+
+    $LB("%Y-%m-%d %I:%M:%S %p %z"),
+    //$LB("%Y-%m-%d %I:%M:%S %p %Z"),
+    $LB("%Y-%m-%d %I:%M:%S %p"),
+
+    $LB("%m/%d/%Y %I:%M:%S %p %z"),
+    //$LB("%m/%d/%Y %I:%M:%S %p %Z"),
+    $LB("%m/%d/%Y %I:%M:%S %p"),
+
+    // no seconds
+    $LB("%Y-%m-%dT%H:%M"),
+    $LB("%Y-%m-%dT%H:%MZ", "", "UTC"),
+    $LB("%Y-%m-%dT%H:%M%z"),
+    $LB("%Y%m%dT%H%M"),
+    $LB("%Y%m%dT%H%MZ", "", "UTC"),
+    $LB("%Y%m%dT%H%M%z"),
+
+    $LB("%Y-%m-%d %H:%M %z"),
+    //$LB("%Y-%m-%d %H:%M %Z"),
+    $LB("%Y-%m-%d %H:%M"),
+
+    $LB("%m/%d/%Y %H:%M %z"),
+    //$LB("%m/%d/%Y %H:%M %Z"),
+    $LB("%m/%d/%Y %H:%M"),
+
+    $LB("%Y-%m-%d %I:%M %p %z"),
+    //$LB("%Y-%m-%d %I:%M %p %Z"),
+    $LB("%Y-%m-%d %I:%M %p"),
+
+    $LB("%m/%d/%Y %I:%M %p %z"),
+    //$LB("%m/%d/%Y %I:%M %p %Z"),
+    $LB("%m/%d/%Y %I:%M %p"),
+
+    // date-only
+    $LB("%Y-%m-%d", "", "", "<DATEONLY>"),
+    $LB("%m/%d/%Y", "", "", "<DATEONLY>"),
+  )
+
+  set numFormats = $LISTLENGTH(formats)
+  for i=1:1:numFormats {
+    set patternAndFmt = $LISTGET(formats, i)
+
+    if patternAndFmt = "" {
+      continue
+    }
+
+    set fmt = $LISTGET(patternAndFmt, 1)
+    set pattern = $LISTGET(patternAndFmt, 2)
+    set tz = $LISTGET(patternAndFmt, 3)
+    set dateOnly = $LISTGET(patternAndFmt, 4)
+
+    if pattern = "" {
+      set pattern = ..fmtToPattern(fmt)
+    }
+
+    if tz = "" {
+      set tz = pTz
+    }
+
+    if $MATCH(pDt, pattern) {
+      return $LB(fmt, tz, dateOnly)
+    }
+  }
+  return ""
+]]></Implementation>
+</Method>
+
+<Method name="fmtToPattern">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>fmt:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  set rslt = fmt
+
+  // We only need the patterns used in DetermineFormat above...
+  //    %d,%H %m,%M %p,%S %Y,%z
+
+  //set rslt = $REPLACE(rslt, "%c", "%a %b %d %X %Y")
+  //set rslt = $REPLACE(rslt, "%x", "%m/%d/%y")
+  //set rslt = $REPLACE(rslt, "%X", "%H:%M:%S")
+
+  //set rslt = $REPLACE(rslt, "%a", "[a-zA-Z]+")
+  //set rslt = $REPLACE(rslt, "%A", "[a-zA-Z]+")
+  //set rslt = $REPLACE(rslt, "%b", "[a-zA-Z]+")
+  //set rslt = $REPLACE(rslt, "%B", "[a-zA-Z]+")
+  set rslt = $REPLACE(rslt, "%d", "[0123]?[0-9]")
+  //set rslt = $REPLACE(rslt, "%f", "[0-9]{6}")
+  set rslt = $REPLACE(rslt, "%H", "[0123]?[0-9]")
+  set rslt = $REPLACE(rslt, "%I", "[01]?[0-9]")
+  //set rslt = $REPLACE(rslt, "%j", "[0-9]{1,3}")
+  set rslt = $REPLACE(rslt, "%m", "[01]?[0-9]")
+  set rslt = $REPLACE(rslt, "%M", "[0-5][0-9]")
+  set rslt = $REPLACE(rslt, "%p", "(AM|PM|am|pm)")
+  set rslt = $REPLACE(rslt, "%S", "[0-5][0-9]")
+  //set rslt = $REPLACE(rslt, "%U", "[0-5][0-9]")
+  //set rslt = $REPLACE(rslt, "%u", "[1-7]")
+  //set rslt = $REPLACE(rslt, "%w", "[0-6]")
+  //set rslt = $REPLACE(rslt, "%W", "[0-5][0-9]")
+  //set rslt = $REPLACE(rslt, "%y", "[0-9]{2}")
+  set rslt = $REPLACE(rslt, "%Y", "[0-9]{4}")
+  set rslt = $REPLACE(rslt, "%z", "[+-][0-9]{2,4}")
+  //set rslt = $REPLACE(rslt, "%Z", "[a-zA-Z]+")
+  //set rslt = $REPLACE(rslt, "%G", "[0-9]{4}")
+  //set rslt = $REPLACE(rslt, "%V", "[0-5][0-9]")
+  set rslt = $REPLACE(rslt, "%%", "[%]")
+
+  return "^"_rslt_"$"
+]]></Implementation>
+</Method>
+
+<Method name="Convert">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pSrcTz,pSrcFormat="",pDestFormat="",pDestTz="",*pStatus:%Status</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  set pStatus = $$$OK
+
+  if (pDt = "") {
+    return ""
+  }
+
+  // If source format is "", try to determine the matching format.
+  // Error if unable to determine format.
+  if (pSrcFormat = "") {
+    set fmtRslt = ..DetermineFormat(pDt, pSrcTz)
+    set pSrcFormat = $LISTGET(fmtRslt, 1)
+    set pSrcTz = $LISTGET(fmtRslt, 2)
+    set dateOnly = $LISTGET(fmtRslt, 3)
+
+    // TODO: What if the input is only a date?
+
+    if pSrcFormat = "" {
+      set pStatus = $$$ERROR($$$GeneralError, "Unable to determine source format: "_pDt)
+      return ""
+    }
+  }
+
+  // If no dest format is provided, use the source format.
+  if (pDestFormat = "") {
+    set pDestFormat = pSrcFormat
+  }
+
+  // If no dest tz is provided, use the source tz.
+  if (pDestTz = "") {
+    set pDestTz = pSrcTz
+  }
+
+  try {
+    set rslt = ##class(tz.internal).convertTZ(pDt, pSrcTz, pSrcFormat, pDestFormat, pDestTz)
+  }
+  catch ex {
+    set pStatus = ex.AsStatus()
+    set rslt = ""
+  }
+
+  quit rslt
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="tz.Tests">
+<TimeChanged>67187,30869.870541266</TimeChanged>
+<TimeCreated>67180,67510.539637908</TimeCreated>
+
+<Method name="Run">
+<Description>
+Various Time/TZ Conversion Tests</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  set ok = "" 
+  set strict = 1
+  set notStrict = 0
+
+  set testCases = $LISTBUILD(
+    // DST
+    ..TestInternal("DST.1", "2020-07-01 12:30:10"      , "America/Chicago", "%Y-%m-%d %H:%M:%S"   , "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-07-01 13:30:10 -0400"),
+    ..TestInternal("DST.2", "2020-07-01 12:30:10 -0400", "America/Chicago", "%Y-%m-%d %H:%M:%S %z", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-07-01 12:30:10 -0400"),
+    ..TestInternal("DST.3", "2020-07-01 12:30:10 -0500", "America/Chicago", "%Y-%m-%d %H:%M:%S %z", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-07-01 13:30:10 -0400"),
+    
+    // Standard
+    ..TestInternal("STD.1", "2020-12-01 12:30:10"      , "America/Chicago", "%Y-%m-%d %H:%M:%S"   , "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-12-01 13:30:10 -0500"),
+    ..TestInternal("STD.2", "2020-12-01 12:30:10 -0400", "America/Chicago", "%Y-%m-%d %H:%M:%S %z", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-12-01 11:30:10 -0500"),
+    ..TestInternal("STD.3", "2020-12-01 12:30:10 -0500", "America/Chicago", "%Y-%m-%d %H:%M:%S %z", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-12-01 12:30:10 -0500"),
+    
+    // Standard -> DST Transitions
+    ..TestInternal("STD.DST.1", "2020-03-08 00:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-03-08 00:00:00 -0500"),
+    ..TestInternal("STD.DST.2", "2020-03-08 01:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-03-08 01:00:00 -0500"),
+    ..TestInternal("STD.DST.3", "2020-03-08 01:59:59", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-03-08 01:59:59 -0500"),
+    ..TestInternal("STD.DST.4", "2020-03-08 02:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-03-08 03:00:00 -0400"),
+    ..TestInternal("STD.DST.5", "2020-03-08 03:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-03-08 03:00:00 -0400"),
+    
+    // DST -> Standard Transitions (Ok)
+    ..TestInternal("DST.STD.1", "2020-11-01 00:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-11-01 00:00:00 -0400"),
+    // see "Ambiguous" tests below for the 1:00 am hours
+    ..TestInternal("DST.STD.2", "2020-11-01 02:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-11-01 02:00:00 -0500"),
+    ..TestInternal("DST.STD.3", "2020-11-01 03:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-11-01 03:00:00 -0500"),
+    
+    // DST -> Standard Transitions (Ambiguous)
+    // Since there are two 1 AMs during the DST -> Standard transition, we don't really know which result we will receive.
+    ..TestInternal("DST.STD.4", "2020-11-01 01:00:00", "America/New_York", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S %z", "America/New_York", "2020-11-01 01:00:00 -0400", "2020-11-01 01:00:00 -0500"),
+
+    ..TestConvert("Convert.1", "2020-01-02 03:30:45", "America/New_York", "%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.BlankDate", "", "America/New_York", "%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, ""),
+
+
+    ////*****************************************
+    //// full date/time
+    ////*****************************************
+
+    //$LB("%Y%m%d%H%M%S%z"),
+    ..TestConvert("Convert.Format.1", "20200102033045-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y%m%d%H%M%S"),
+    ..TestConvert("Convert.Format.2", "20200102033045", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y-%m-%dT%H:%M:%S"),
+    ..TestConvert("Convert.Format.3a", "2020-01-02T03:30:45", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.Format.3b", "2020-1-2T3:30:45", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y-%m-%dT%H:%M:%SZ"),
+    //This should be interpretted as UTC
+    ..TestConvert("Convert.Format.4", "2020-01-02T03:30:45Z", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 21:30:45 -0600"),
+
+    //$LB("%Y-%m-%dT%H:%M:%S%z"),
+    ..TestConvert("Convert.Format.5a", "2020-01-02T03:30:45-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.Format.5b", "2020-1-2T3:30:45-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y%m%dT%H%M%S"),
+    ..TestConvert("Convert.Format.6", "20200102T033045", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y%m%dT%H%M%SZ"),
+    //This should be interpretted as UTC
+    ..TestConvert("Convert.Format.7", "20200102T033045Z", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 21:30:45 -0600"),
+
+    //$LB("%Y%m%dT%H%M%S%z"),
+    ..TestConvert("Convert.Format.8", "20200102T033045-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+
+    //$LB("%Y-%m-%d %H:%M:%S %z"),
+    ..TestConvert("Convert.Format.9a", "2020-01-02 03:30:45 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.Format.9b", "2020-1-2 3:30:45 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M:%S %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.2", "2020-01-02 03:30:45 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    //..TestConvert("Convert.Format.10", "2020-1-2 3:30:45 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M:%S"),
+    ..TestConvert("Convert.Format.10a", "2020-01-02 03:30:45", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.Format.10b", "2020-1-2 3:30:45", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M:%S %z"),
+    ..TestConvert("Convert.Format.11a", "01/02/2020 03:30:45 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.Format.11b", "1/2/2020 3:30:45 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M:%S %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.5", "01/02/2020 03:30:45 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    //..TestConvert("Convert.Format.7", "1/2/2020 3:30:45 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M:%S"),
+    ..TestConvert("Convert.Format.12a", "01/02/2020 03:30:45", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+    ..TestConvert("Convert.Format.12b", "1/2/2020 3:30:45", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M:%S %p %z"),
+    ..TestConvert("Convert.Format.13a", "2020-01-02 03:30:45 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+    ..TestConvert("Convert.Format.13b", "2020-1-2 3:30:45 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M:%S %p %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.11", "2020-01-02 03:30:45 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+    //..TestConvert("Convert.Format.11", "2020-1-2 3:30:45 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M:%S %p"),
+    ..TestConvert("Convert.Format.14a", "2020-01-02 03:30:45 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+    ..TestConvert("Convert.Format.14b", "2020-1-2 3:30:45 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M:%S %p %z"),
+    ..TestConvert("Convert.Format.15a", "01/02/2020 03:30:45 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+    ..TestConvert("Convert.Format.15b", "1/2/2020 3:30:45 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M:%S %p %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.11", "01/02/2020 03:30:45 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+    //..TestConvert("Convert.Format.11", "1/2/2020 3:30:45 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M:%S %p"),
+    ..TestConvert("Convert.Format.16a", "01/02/2020 03:30:45 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+    ..TestConvert("Convert.Format.16b", "1/2/2020 3:30:45 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:45 -0600"),
+
+
+    ////*****************************************
+    //// no seconds
+    ////*****************************************
+
+    //$LB("%Y-%m-%dT%H:%M"),
+    ..TestConvert("Convert.Format.17a", "2020-01-02T03:30", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    ..TestConvert("Convert.Format.17b", "2020-1-2T3:30", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y-%m-%dT%H:%MZ"),
+    //This should be interpretted as UTC
+    ..TestConvert("Convert.Format.18", "2020-01-02T03:30Z", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 21:30:00 -0600"),
+
+    //$LB("%Y-%m-%dT%H:%M%z"),
+    ..TestConvert("Convert.Format.19a", "2020-01-02T03:30-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    ..TestConvert("Convert.Format.19b", "2020-1-2T3:30-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y%m%dT%H%M"),
+    ..TestConvert("Convert.Format.20", "20200102T0330", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y%m%dT%H%MZ"),
+    //This should be interpretted as UTC
+    ..TestConvert("Convert.Format.21", "20200102T0330Z", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 21:30:00 -0600"),
+
+    //$LB("%Y%m%dT%H%M%z"),
+    ..TestConvert("Convert.Format.22", "20200102T0330-0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M %z"),
+    ..TestConvert("Convert.Format.23a", "2020-01-02 03:30 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    ..TestConvert("Convert.Format.23b", "2020-1-2 3:30 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.5a", "2020-01-02 03:30 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    //..TestConvert("Convert.Format.5b", "2020-1-2 3:30 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M"),
+    ..TestConvert("Convert.Format.24a", "2020-01-02 03:30", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    ..TestConvert("Convert.Format.24b", "2020-1-2 3:30", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M %z"),
+    ..TestConvert("Convert.Format.25a", "01/02/2020 03:30 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    ..TestConvert("Convert.Format.25b", "1/2/2020 3:30 -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.5a", "01/02/2020 03:30 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    //..TestConvert("Convert.Format.5b", "1/2/2020 3:30 EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M"),
+    ..TestConvert("Convert.Format.26a", "01/02/2020 03:30", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+    ..TestConvert("Convert.Format.26b", "1/2/2020 3:30", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:00 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M %p %z"),
+    ..TestConvert("Convert.Format.27a", "2020-01-02 03:30 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+    ..TestConvert("Convert.Format.27b", "2020-1-2 3:30 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M %p %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.5a", "2020-01-02 03:30 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+    //..TestConvert("Convert.Format.5b", "2020-1-2 3:30 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+
+    //$LB("%Y-%m-%d %H:%M %p"),
+    ..TestConvert("Convert.Format.28a", "2020-01-02 03:30 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+    ..TestConvert("Convert.Format.28b", "2020-1-2 3:30 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M %p %z"),
+    ..TestConvert("Convert.Format.29a", "01/02/2020 03:30 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+    ..TestConvert("Convert.Format.29b", "1/2/2020 3:30 PM -0500", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M %p %Z"),
+    // NOT SUPPORTED BY PYTHON
+    //..TestConvert("Convert.Format.5a", "01/02/2020 03:30 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+    //..TestConvert("Convert.Format.5b", "1/2/2020 3:30 PM EST", "America/Los_Angeles", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+
+    //$LB("%m/%d/%Y %H:%M %p"),
+    ..TestConvert("Convert.Format.30a", "01/02/2020 03:30 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+    ..TestConvert("Convert.Format.30b", "1/2/2020 3:30 PM", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 14:30:00 -0600"),
+
+
+    ////*****************************************
+    //// date-only
+    ////*****************************************
+
+    //$LB("%Y-%m-%d"),
+    ..TestConvert("Convert.Format.31a", "2020-01-02", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 23:00:00 -0600"),
+    ..TestConvert("Convert.Format.31a", "2020-1-2", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 23:00:00 -0600"),
+
+    //$LB("%m/%d/%Y"),
+    ..TestConvert("Convert.Format.32a", "01/02/2020", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 23:00:00 -0600"),
+    ..TestConvert("Convert.Format.32a", "1/2/2020", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/01/2020 23:00:00 -0600"),
+
+    ////*****************************************
+    //// ##class(tz.HL7).ConvertTZ()
+    ////*****************************************
+
+    ..TestHL7ConvertTz("HL7.1a", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", "HL7WithOffset", "20200102023045-0600"),
+    ..TestHL7ConvertTz("HL7.1b", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", "HL7Local"     , "20200102023045"),
+    ..TestHL7ConvertTz("HL7.1c", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", ""             , "20200102023045-0600"),
+
+    ..TestHL7ConvertTz("HL7.2a", "20200102033045"     , "America/New_York", "America/Chicago", "HL7WithOffset", "20200102023045-0600"),
+    ..TestHL7ConvertTz("HL7.2b", "20200102033045"     , "America/New_York", "America/Chicago", "HL7Local"     , "20200102023045"),
+    ..TestHL7ConvertTz("HL7.2c", "20200102033045"     , "America/New_York", "America/Chicago", ""             , "20200102023045"),
+
+    ..TestHL7ConvertTz("HL7.3a", "202001020330"       , "America/New_York", "America/Chicago", "HL7WithOffset", "20200102023000-0600"),
+    ..TestHL7ConvertTz("HL7.3b", "202001020330"       , "America/New_York", "America/Chicago", "HL7Local"     , "20200102023000"),
+    ..TestHL7ConvertTz("HL7.3c", "202001020330"       , "America/New_York", "America/Chicago", ""             , "202001020230"),
+
+    ..TestHL7ConvertTz("HL7.4a", "202001020330-0500"  , "America/Los_Angeles", "America/Chicago", "HL7WithOffset", "20200102023000-0600"),
+    ..TestHL7ConvertTz("HL7.4b", "202001020330-0500"  , "America/Los_Angeles", "America/Chicago", "HL7Local"     , "20200102023000"),
+    ..TestHL7ConvertTz("HL7.4c", "202001020330-0500"  , "America/Los_Angeles", "America/Chicago", ""             , "202001020230-0600"),
+
+    ..TestHL7ConvertTz("HL7.5a", "20200102"           , "America/New_York", "America/Chicago", "HL7WithOffset", "20200102"),
+    ..TestHL7ConvertTz("HL7.5b", "20200102"           , "America/New_York", "America/Chicago", "HL7Local"     , "20200102"),
+    ..TestHL7ConvertTz("HL7.5c", "20200102"           , "America/New_York", "America/Chicago", ""             , "20200102"),
+
+    ..TestHL7ConvertTz("HL7.6a", "202001"             , "America/New_York", "America/Chicago", "HL7WithOffset", "202001"),
+    ..TestHL7ConvertTz("HL7.6b", "202001"             , "America/New_York", "America/Chicago", "HL7Local"     , "202001"),
+    ..TestHL7ConvertTz("HL7.6c", "202001"             , "America/New_York", "America/Chicago", ""             , "202001"),
+
+    ..TestHL7ConvertTz("HL7.7a", "2020"               , "America/New_York", "America/Chicago", "HL7WithOffset", "2020"),
+    ..TestHL7ConvertTz("HL7.7b", "2020"               , "America/New_York", "America/Chicago", "HL7Local"     , "2020"),
+    ..TestHL7ConvertTz("HL7.7c", "2020"               , "America/New_York", "America/Chicago", ""             , "2020"),
+
+    ..TestHL7ConvertTz("HL7.8a", ""                   , "America/New_York", "America/Chicago", "HL7WithOffset", ""),
+    ..TestHL7ConvertTz("HL7.8b", ""                   , "America/New_York", "America/Chicago", "HL7Local"     , ""),
+    ..TestHL7ConvertTz("HL7.8c", ""                   , "America/New_York", "America/Chicago", ""             , ""),
+
+    ..TestHL7ConvertTz("HL7.9a", "20200102033045Z"     , "America/New_York", "America/Chicago", "HL7WithOffset", "20200101213045-0600"),
+    ..TestHL7ConvertTz("HL7.9b", "20200102033045Z"     , "America/New_York", "America/Chicago", "HL7Local"     , "20200101213045"),
+    ..TestHL7ConvertTz("HL7.9c", "20200102033045Z"     , "America/New_York", "America/Chicago", ""             , "20200101213045-0600"),
+
+    ..TestHL7ConvertTz("HL7.10a", "202001020330Z"      , "America/New_York", "America/Chicago", "HL7WithOffset", "20200101213000-0600"),
+    ..TestHL7ConvertTz("HL7.10b", "202001020330Z"      , "America/New_York", "America/Chicago", "HL7Local"     , "20200101213000"),
+    ..TestHL7ConvertTz("HL7.10c", "202001020330Z"      , "America/New_York", "America/Chicago", ""             , "202001012130-0600"),
+
+    ..TestHL7ConvertTz("HL7.11a", "2020010203Z"        , "America/New_York", "America/Chicago", "HL7WithOffset", "20200101210000-0600"),
+    ..TestHL7ConvertTz("HL7.11b", "2020010203Z"        , "America/New_York", "America/Chicago", "HL7Local"     , "20200101210000"),
+    ..TestHL7ConvertTz("HL7.11c", "2020010203Z"        , "America/New_York", "America/Chicago", ""             , "2020010121-0600"),
+
+    // 1a: Strict, return original value
+    // 1b: Not strict, try parsing the datetime (HL7WithOffset)
+    // 1c: Not strict, try parsing the datetime (source format)
+    // 1d: Strict, return blank
+    ..TestHL7ConvertTz("HL7.Strict.1a","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "2020-01-02 03:30:45 -0500",, strict),
+    ..TestHL7ConvertTz("HL7.Strict.1b","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "20200102023045-0600",, notStrict),
+    ..TestHL7ConvertTz("HL7.Strict.1c","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", ""             , "2020-01-02 02:30:45 -0600",, notStrict),
+    ..TestHL7ConvertTz("HL7.Strict.1d","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "{{Date Parse ERROR}}","{{Date Parse ERROR}}", strict),
+    ..TestHL7ConvertTz("HL7.Strict.1e","BAD:2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "{{Date Parse ERROR}}","{{Date Parse ERROR}}", notStrict),
+  )
+
+
+  set numCases = $LISTLENGTH(testCases)
+  set errs = 0
+  set successes = 0
+  set testcount = 0
+
+  for i=1:1:numCases {
+    set rslt = $LISTGET(testCases, i)
+
+    if (rslt = "") {
+      continue
+    }
+
+    set testcount = testcount + 1
+    
+    if ($$$ISERR(rslt)) {
+      set errs = errs + 1
+    } else {
+      set successes = successes + 1
+    }
+  }
+
+  if successes '= 0 {
+    write successes_" Tests Successful!",!
+  }
+
+  if errs '= 0 {
+    write errs_" ERRORS",!
+    return $$$ERROR($$$GeneralError, "Tests Failed: "_errs)
+  }
+
+  return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="TestInternal">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testId,dt,inTz,inFmt,outFmt,outTz,expectedValue,altExpectedValue:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  set rslt = ##class(tz.internal).convertTZ(dt, inTz, inFmt, outFmt, outTz)
+  return ..expect(testId, rslt, expectedValue, altExpectedValue)
+]]></Implementation>
+</Method>
+
+<Method name="TestConvert">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testId,dt,inTz,inFmt,outFmt,outTz,expectOK,expectedValue,altExpectedValue:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  set rslt = ##class(tz.TZ).Convert(dt, inTz, inFmt, outFmt, outTz, .tSC)
+
+  set scText = $System.Status.GetErrorText(tSC)
+  set statusStatus = ..expect(testId_".Status", scText, expectOK)
+
+  if $$$ISERR(statusStatus) {
+    return statusStatus
+  }
+
+  return ..expect(testId, rslt, expectedValue, altExpectedValue)
+]]></Implementation>
+</Method>
+
+<Method name="TestHL7ConvertTz">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testId,dt,inTz,outTz,outFmt="",expectedValue="",pErrOutput:%String="{do not convert}",pStrict:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  set rslt = ##class(tz.HL7).ConvertTz(dt, inTz, outTz, outFmt, .tSC, pErrOutput, pStrict)
+
+  set scText = $System.Status.GetErrorText(tSC)
+  //set ok = ""
+  //set statusStatus = ..expect(testId_".Status", scText, ok)
+
+  if $$$ISERR(tSC) {
+    //w "ERROR: ",scText,!
+  }
+
+  return ..expect(testId, rslt, expectedValue)
+]]></Implementation>
+</Method>
+
+<Method name="expect">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testId,value,expectedValue,altExpectedValue:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  if (value = expectedValue) {
+    return $$$OK
+  }
+
+  if (altExpectedValue '= "") && (value = altExpectedValue) {
+    return $$$OK
+  }
+
+  set errLines = $LB(
+    "Value does not match expected value (test="_testId_")",
+    "  Value   : "_value,
+    "  Expected: "_expectedValue,
+    "  Expected: "_expectedValue_" (alternate)",
+  )
+
+  if altExpectedValue = "" {
+    set errLines = $LB(
+      "Value does not match expected value (test="_testId_")",
+      "  Value   : "_value,
+      "  Expected: "_expectedValue
+    )
+  } else {
+    set errLines = $LB(
+      "Value does not match any expected values (test="_testId_")",
+      "  Value   : "_value,
+      "  Expected: "_expectedValue_" (option 1)",
+      "  Expected: "_altExpectedValue_" (option 2)"
+    )
+  }
+
+  set NL = $CHAR(10)_$CHAR(13)
+  write "ERROR: "_$LISTTOSTRING(errLines, NL),!!
+
+  set errMsg = $LISTTOSTRING(errLines, "; ")
+  return $$$ERROR($$$GeneralError, errMsg)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="tz.internal">
+<TimeChanged>67187,1939.507312214</TimeChanged>
+<TimeCreated>67180,67866.463057633</TimeCreated>
+
+<Method name="convertTZ">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pSrcTz,pSrcFormat,pDestFormat,pDestTz</FormalSpec>
+<Language>python</Language>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  # This uses time.tzset.  Unfortunately, this is not supported on Windows.
+  import datetime
+  import time
+  import os
+
+  origTz = os.environ.get('TZ', None)
+
+  # parse the input datetime
+  inDt = datetime.datetime.strptime(pDt, pSrcFormat)
+
+  # if no tzinfo in the parsed date (i.e. this was a local datetime, without an offset/zone)
+  # replace the tzinfo with the input timezone
+  if inDt.tzinfo == None:
+    os.environ['TZ'] = pSrcTz
+    time.tzset()
+
+  epoch_secs = inDt.timestamp()
+
+  # convert to the desired timezone
+  os.environ['TZ'] = pDestTz
+  time.tzset()
+  outDt = time.localtime(epoch_secs)
+  
+  # alternate method of converting timezones
+  # outDt = inDt.astimezone(outTz)
+
+  rslt = time.strftime(pDestFormat, outDt)
+
+  if origTz:
+    os.environ['TZ'] = origTz
+  else:
+    del(os.environ['TZ'])
+
+  time.tzset()
+
+  return rslt
+]]></Implementation>
+</Method>
+
+<Method name="convertTZwithZoneInfo">
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDt,pSrcTz,pSrcFormat,pDestFormat,pDestTz</FormalSpec>
+<Language>python</Language>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+  # This really only works in more recent versions of python.
+  # Until zoneinfo is more widely available, we will not use this.
+  import datetime
+  import zoneinfo
+
+  # parse the timezones
+  inTz = zoneinfo.ZoneInfo(pSrcTz)
+  outTz = zoneinfo.ZoneInfo(pDestTz)
+
+  # parse the input datetime
+  inDt = datetime.datetime.strptime(pDt, pSrcFormat)
+
+  # if no tzinfo in the parsed date (i.e. this was a local datetime, without an offset/zone)
+  # replace the tzinfo with the input timezone
+  if inDt.tzinfo == None:
+    inDt = inDt.replace(tzinfo=inTz)
+
+  # convert to the desired timezone
+  outDt = datetime.datetime.fromtimestamp(inDt.timestamp(), tz=outTz)
+  
+  # alternate method of converting timezones
+  # outDt = inDt.astimezone(outTz)
+
+  return outDt.strftime(pDestFormat)
+]]></Implementation>
+</Method>
+</Class>
+</Export>
