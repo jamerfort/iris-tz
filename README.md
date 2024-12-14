@@ -67,9 +67,62 @@ Once you have installed the library as mentioned above, verify your installation
 
 ```cls
 NAMESPACE>do ##class(tz.TZ).Test()
-40 Tests Successful!
-0 ERRORS
+109 Tests Successful!
 ```
+### Test with Docker
+
+If you prefer, you can load the library with docker, run the built-in tests, and experiment with the `tz` classes.
+
+First, download/clone the repo to your local computer:
+
+```bash
+git clone git@github.com:jamerfort/iris-tz.git
+```
+Build and connect to your instance:
+
+```bash
+cd iris-tz
+
+# Rebuild/start the image
+docker compose up --build -d
+
+# Connect to your instance
+docker exec -it iris-tz iris terminal IRIS
+```
+
+Run tests from your iris terminal:
+```cls
+// Built-in Tests
+USER>do ##class(tz.TZ).Test()
+109 Tests Successful!
+
+// Experiment with the API
+USER>zw ##class(tz.HL7).ConvertTz("20240102033045-0500", "America/New_York")
+"20240102033045-0500"
+```
+
+Reload changes to tz source code from your iris terminal:
+
+```cls
+USER>do $system.OBJ.LoadDir("/home/irisowner/dev/src", "cuk",,1)
+
+Load of directory started on 12/14/2024 00:40:14
+Loading file /home/irisowner/dev/src/cls/tz/HL7.cls as cls
+Imported class: tz.HL7
+Loading file /home/irisowner/dev/src/cls/tz/TZ.cls as cls
+Imported class: tz.TZ
+Loading file /home/irisowner/dev/src/cls/tz/internal.cls as cls
+Imported class: tz.internal
+Loading file /home/irisowner/dev/src/cls/tz/Tests.cls as cls
+Imported class: tz.Tests
+Class tz.HL7 is up-to-date.
+Class tz.TZ is up-to-date.
+Class tz.Tests is up-to-date.
+Class tz.internal is up-to-date.
+Load finished successfully.
+```
+
+
 ## Supported Timezones
 
 This library uses the [IANA timezone database/information](https://www.iana.org/time-zones) installed on your system to perform the necessary timezone conversions.  This database is typically updated whenever you apply operating system patches.

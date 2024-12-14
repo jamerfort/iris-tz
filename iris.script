@@ -1,0 +1,8 @@
+ROUTINE iris
+    zn "USER"
+
+    do $system.OBJ.LoadDir("/home/irisowner/dev/src", "cuk",,1)
+
+    do ##class(tz.TZ).Test()
+
+    halt

@@ -1,0 +1,5 @@
+:alias load do $system.OBJ.LoadDir("/home/irisowner/dev/src/cls","cuk",,1) ;
+:alias l do $system.OBJ.LoadDir("/home/irisowner/dev/src/cls","cuk",,1) ;
+:alias test do ##class(tz.TZ).Test() ;
+:alias t do ##class(tz.TZ).Test() ;
+:alias x do $system.OBJ.LoadDir("/home/irisowner/dev/src", "cuk",,1) w "=============================================",! do ##class(tz.TZ).Test()
