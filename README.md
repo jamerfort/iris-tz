@@ -51,6 +51,13 @@ set dt = ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "Americ
 
 ## Installation
 
+There are several methods for installing this library:
+1. Import classes directly into IRIS
+2. Install the IPM/ZPM package 
+3. Docker
+
+### Option 1: Import Classes Directly into IRIS
+
 Download the most recent `exports/tz.Export.xml` from the repository.
 
 Import `tz.Export.xml` into your IRIS instance using the **Import** button found on the **System Operation > Classes** page in your Management Portal.
@@ -58,18 +65,22 @@ Import `tz.Export.xml` into your IRIS instance using the **Import** button found
 If you prefer loading `tz.Export.xml` from an IRIS terminal:
 
 ```cls
-NAMESPACE>do $system.OBJ.Load("/path/to/tz.Export.xml", "cuk")
+USER>do $system.OBJ.Load("/path/to/tz.Export.xml", "cuk")
 ```
+### Option 2: Install the IPM/ZPM package 
 
-### Verify/Test Installation
-
-Once you have installed the library as mentioned above, verify your installation using the following commands from IRIS terminal:
-
+Once package is approved, use `zpm` install the `tz` package:
 ```cls
-NAMESPACE>do ##class(tz.TZ).Test()
-109 Tests Successful!
+USER>zpm
+
+=============================================================================
+|| Welcome to the Package Manager Shell (ZPM). version 0.7.4               ||
+|| Enter q/quit to exit the shell. Enter ?/help to view available commands ||
+|| Current registry https://pm.community.intersystems.com                  ||
+=============================================================================
+zpm:USER>install tz
 ```
-### Test with Docker
+### Option 3: Docker
 
 If you prefer, you can load the library with docker, run the built-in tests, and experiment with the `tz` classes.
 
@@ -81,14 +92,18 @@ git clone git@github.com:jamerfort/iris-tz.git
 Build and connect to your instance:
 
 ```bash
-cd iris-tz
+cd ./iris-tz
 
 # Rebuild/start the image
 docker compose up --build -d
 
 # Connect to your instance
 docker exec -it iris-tz iris terminal IRIS
+
+# Stop your containers
+docker compose down 
 ```
+## Verify/Test Installation
 
 Run tests from your iris terminal:
 ```cls
@@ -101,7 +116,7 @@ USER>zw ##class(tz.HL7).ConvertTz("20240102033045-0500", "America/New_York")
 "20240102033045-0500"
 ```
 
-Reload changes to tz source code from your iris terminal:
+If you are using Docker or have a copy of the repo, you can reload changes to the `tz` source code from your iris terminal:
 
 ```cls
 USER>do $system.OBJ.LoadDir("/home/irisowner/dev/src", "cuk",,1)
@@ -121,7 +136,6 @@ Class tz.Tests is up-to-date.
 Class tz.internal is up-to-date.
 Load finished successfully.
 ```
-
 
 ## Supported Timezones
 
