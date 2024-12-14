@@ -54,28 +54,28 @@ Class tz.HL7
 /// <h4>Result:</h4>
 /// <p>Return the converted HL7 date/datetime string.  If an error occurs, pErrOutput is used to determine result. (See below)</p>
 /// <h4>Examples:</h4>
-/// <pre><code class="language-cls">IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+/// <pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
 /// &quot;20200102023045-0600&quot;
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;)
 /// 20200102023045
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;, &quot;HL7WithOffset&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;, &quot;HL7WithOffset&quot;)
 /// &quot;20200102023045-0600&quot;
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;HL7Local&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;HL7Local&quot;)
 /// 20200102023045
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;%Y-%m-%d %H:%M:%S %z&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;%Y-%m-%d %H:%M:%S %z&quot;)
 /// &quot;2020-01-02 02:30:45 -0600&quot;
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;&quot;, &quot;America/Chicago&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;&quot;, &quot;America/Chicago&quot;)
 /// &quot;&quot;
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;)
 /// 20240102
 /// 
-/// IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;, &quot;America/New_York&quot;)
+/// USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;, &quot;America/New_York&quot;)
 /// 20240102
 /// </code></pre>
 /// <h4>Supported Input Formats:</h4>
@@ -258,30 +258,92 @@ ClassMethod SplitOffset(pInWithOffset, Output pDatetime, Output pOffset As %Stri
   quit 1
 }
 
-// TODO: Rewrite/reorganize the below functions
-
-ClassMethod WithOffset(pDt, pTz, pSrcFormat = "", pDestTz = "") As %String
+/// <p><code>WithOffset()</code> converts HL7-formatted dates/datetimes to the desired timezone with a format of <code>YYYYMMDDHHMMSS±zzzz</code>.</p>
+/// <p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on arguments, return values, formats, timezones, etc.</p>
+/// <h4>Examples:</h4>
+/// <pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).WithOffset(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+/// &quot;20200102023045-0600&quot;
+/// 
+/// USER&gt;zw ##class(tz.HL7).WithOffset(&quot;20200102033045&quot;, &quot;America/Chicago&quot;)
+/// &quot;20200102033045-0600&quot;
+/// 
+/// USER&gt;zw ##class(tz.HL7).WithOffset(&quot;20200102033045&quot;, &quot;America/Chicago&quot;, &quot;America/Denver&quot;)
+/// &quot;20200102023045-0700&quot;
+/// </code></pre>
+ClassMethod WithOffset(pDt, pTz, pDestTz As %String = "", Output pStatus = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %String
 {
-  quit ..ConvertTz(pDt, pTz, pSrcFormat, "HL7withOffset", pDestTz)
+  quit ..ConvertTz(pDt, pTz, pDestTz, "HL7WithOffset", .pStatus, pErrOutput, pStrict)
 }
 
-ClassMethod ToLocal(pDt, pTz, pSrcFormat = "", pDestTz = "") As %String
+/// <p><code>ToLocal()</code> converts HL7-formatted dates/datetimes to the desired timezone with a format of <code>YYYYMMDDHHMMSS</code>.</p>
+/// <p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on arguments, return values, formats, timezones, etc.</p>
+/// <h4>Examples:</h4>
+/// <pre><code class="language-cls">USER&gt; zw ##class(tz.HL7).ToLocal(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+/// 20200102023045
+/// 
+/// USER&gt;zw ##class(tz.HL7).ToLocal(&quot;20200102033045&quot;, &quot;America/Chicago&quot;)
+/// 20200102033045
+/// 
+/// USER&gt;zw ##class(tz.HL7).ToLocal(&quot;20200102033045&quot;, &quot;America/Chicago&quot;, &quot;America/Denver&quot;)
+/// 20200102023045
+/// </code></pre>
+ClassMethod ToLocal(pDt, pTz, pDestTz As %String = "", Output pStatus = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %String
 {
-  quit ..ConvertTz(pDt, pTz, pSrcFormat, "HL7", pDestTz)
+  quit ..ConvertTz(pDt, pTz, pDestTz, "HL7Local", .pStatus, pErrOutput, pStrict)
 }
 
+/// <p><code>NowLocal()</code> returns the current local time for the given timezone with a format of <code>YYYYMMDDHHMMSS</code>.</p>
+/// <p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on formats, timezones, etc.</p>
+/// <table>
+/// <thead>
+/// <tr>
+/// <th>Argument</th>
+/// <th>Description</th>
+/// <th>Examples</th>
+/// </tr>
+/// </thead>
+/// <tbody><tr>
+/// <td>pTz</td>
+/// <td>The source timezone.</td>
+/// <td>&quot;America/New_York&quot;, &quot;America/Los_Angeles&quot;</td>
+/// </tr>
+/// </tbody></table>
+/// <h4>Examples:</h4>
+/// <pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).NowLocal(&quot;America/Chicago&quot;)
+/// &quot;20200102023045&quot;
+/// </code></pre>
 ClassMethod NowLocal(pTz) As %String
 {
   set now = $ZDATETIME($HOROLOG, 3, 5)
   set srcFmt = "%Y-%m-%dT%H:%M:%S%z"
-  quit ..ToLocal(now, pTz, srcFmt, pTz)
+  quit ##class(tz.TZ).Convert(now, pTz, srcFmt, "%Y%m%d%H%M%S")
 }
 
+/// <p><code>NowWithOffset()</code> returns the current time with an offset for the given timezone with a format of <code>YYYYMMDDHHMMSS±zzzz</code> .</p>
+/// <p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on formats, timezones, etc.</p>
+/// <table>
+/// <thead>
+/// <tr>
+/// <th>Argument</th>
+/// <th>Description</th>
+/// <th>Examples</th>
+/// </tr>
+/// </thead>
+/// <tbody><tr>
+/// <td>pTz</td>
+/// <td>The source timezone.</td>
+/// <td>&quot;America/New_York&quot;, &quot;America/Los_Angeles&quot;</td>
+/// </tr>
+/// </tbody></table>
+/// <h4>Examples:</h4>
+/// <pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).NowWithOffset(&quot;America/Chicago&quot;)
+/// &quot;20200102023045-0600&quot;
+/// </code></pre>
 ClassMethod NowWithOffset(pTz) As %String
 {
   set now = $ZDATETIME($HOROLOG, 3, 5)
   set srcFmt = "%Y-%m-%dT%H:%M:%S%z"
-  quit ..WithOffset(now, pTz, srcFmt, pTz)
+  quit ##class(tz.TZ).Convert(now, pTz, srcFmt, "%Y%m%d%H%M%S%z")
 }
 
 }

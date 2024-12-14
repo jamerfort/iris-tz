@@ -37,11 +37,27 @@ This library will help you perform the conversions between various local times a
 
 ## tz.HL7 Basic Usage
 ```cls
+// ConvertTz() Examples
 set dt = ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago")
 set dt = ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago")
 set dt = ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago", "HL7Local")
 set dt = ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago", "HL7WithOffset")
 set dt = ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago", "%Y-%m-%d %H:%M:%S")
+
+// ToLocal() Examples
+set dt = ##class(tz.HL7).ToLocal("20200102033045-0500", "America/Chicago")
+set dt = ##class(tz.HL7).ToLocal("20200102033045", "America/Chicago", "America/Denver")
+
+// WithOffset() Examples
+set dt = ##class(tz.HL7).WithOffset("20200102033045-0500", "America/Chicago")
+set dt = ##class(tz.HL7).WithOffset("20200102033045", "America/Chicago")
+set dt = ##class(tz.HL7).WithOffset("20200102033045", "America/Chicago", "America/Denver")
+
+// NowLocal() Example
+set dt = ##class(tz.HL7).NowLocal("America/Chicago")
+
+// NowWithOffset() Example
+set dt = ##class(tz.HL7).NowWithOffset("America/Chicago")
 ```
 
 ## Prerequisites
@@ -221,4 +237,17 @@ The `tz.HL7` class provides several methods for converting HL7-formatted dates/d
 
 1. `ConvertTz()` converts HL7-formatted dates/datetimes to the desired timezone and/or format.
     - See [docs/tz.HL7.ConvertTz.md](./docs/tz.HL7.ConvertTz.md)
+
+2. `ToLocal()` converts HL7-formatted dates/datetimes to the desired timezone with a format of `YYYYMMDDHHMMSS`.
+    - See [docs/tz.HL7.ToLocal.md](./docs/tz.HL7.ToLocal.md)
+
+3. `WithOffset()` converts HL7-formatted dates/datetimes to the desired timezone with a format of `YYYYMMDDHHMMSS±zzzz`.
+    - See [docs/tz.HL7.WithOffset.md](./docs/tz.HL7.WithOffset.md)
+
+4. `NowLocal()` returns the current local time for the given timezone with a format of `YYYYMMDDHHMMSS`.
+    - See [docs/tz.HL7.NowLocal.md](./docs/tz.HL7.NowLocal.md)
+
+5. `NowWithOffset()` returns the current time with an offset for the given timezone with a format of `YYYYMMDDHHMMSS±zzzz`.
+    - See [docs/tz.HL7.NowWithOffset.md](./docs/tz.HL7.NowWithOffset.md)
+
 

@@ -2,10 +2,10 @@
 
 `ConvertTz()` converts HL7-formatted dates/datetimes to the desired timezone and/or format.
 
-## `##class(tz.HL7).ConvertTz()`(pDt, pTz, pDestTz="", pDestFormat As %String = "", Output pStatus As %Status, pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) as %String
+### `##class(tz.HL7).ConvertTz()`(pDt, pTz, pDestTz="", pDestFormat As %String = "", Output pStatus As %Status, pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) as %String
 
 
-## Arguments:
+#### Arguments:
 
 | Argument         | Description                                                            | Examples                                                |
 |----------        |-------------                                                           |----------                                               |
@@ -17,38 +17,38 @@
 | pErrOutput=pDt   | Value to return on error.  By default, do not convert and return pDt.  | "", "00000000000000"                                    |
 | pStrict=0        | If 1 (strict), error if not HL7 format. If 0 (not strict), allow tz.Tz to attempt to parse.| 0, 1                             |
 
-## Result:
+#### Result:
 Return the converted HL7 date/datetime string.  If an error occurs, pErrOutput is used to determine result. (See below)
 
-## Examples:
+#### Examples:
 
 ```cls
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago")
+USER>zw ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago")
 "20200102023045-0600"
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago")
+USER>zw ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago")
 20200102023045
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago", "HL7WithOffset")
+USER>zw ##class(tz.HL7).ConvertTz("20200102033045", "America/New_York", "America/Chicago", "HL7WithOffset")
 "20200102023045-0600"
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago", "", "HL7Local")
+USER>zw ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago", "", "HL7Local")
 20200102023045
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago", "", "%Y-%m-%d %H:%M:%S %z")
+USER>zw ##class(tz.HL7).ConvertTz("20200102033045-0500", "America/Chicago", "", "%Y-%m-%d %H:%M:%S %z")
 "2020-01-02 02:30:45 -0600"
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("", "America/Chicago")
+USER>zw ##class(tz.HL7).ConvertTz("", "America/Chicago")
 ""
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20240102", "America/Chicago")
+USER>zw ##class(tz.HL7).ConvertTz("20240102", "America/Chicago")
 20240102
 
-IRISAPP>zw ##class(tz.HL7).ConvertTz("20240102", "America/Chicago", "America/New_York")
+USER>zw ##class(tz.HL7).ConvertTz("20240102", "America/Chicago", "America/New_York")
 20240102
 ```
 
-## Supported Input Formats:
+#### Supported Input Formats:
 
 `ConvertTz()` attempts to match the given date/datetime to several HL7 formats.
 
@@ -83,7 +83,7 @@ If an error occurs:
 - return pErrOutput if populated
 - If pErrOutput is not set, return pDt.
 
-## Output Formats:
+#### Output Formats:
 
 If pDestFormat is blank, use the same format as the pDt input.
 

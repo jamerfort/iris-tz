@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="IRIS" version="26" zv="IRIS for UNIX (Ubuntu Server LTS for x86-64 Containers) 2024.3 (Build 209U)" ts="2024-12-13 17:22:08">
+<Export generator="IRIS" version="26" zv="IRIS for UNIX (Ubuntu Server LTS for x86-64 Containers) 2024.3 (Build 209U)" ts="2024-12-14 04:57:23">
 <Class name="tz.HL7">
 <Description>
 A class that converts datetimes (formatted as HL7 dates/datetimes) to the desired timezone or format.
 
 See the tz.TZ class for details on timezones and datetime formats.</Description>
-<TimeChanged>67187,35201.342332607</TimeChanged>
-<TimeCreated>67181,3344.68869993</TimeCreated>
+<TimeChanged>67188,17650.270162512</TimeChanged>
+<TimeCreated>67188,6254.243690025</TimeCreated>
 
 <UDLText name="T">
 <Content><![CDATA[
@@ -65,28 +65,28 @@ See the tz.TZ class for details on timezones and datetime formats.</Description>
 <h4>Result:</h4>
 <p>Return the converted HL7 date/datetime string.  If an error occurs, pErrOutput is used to determine result. (See below)</p>
 <h4>Examples:</h4>
-<pre><code class="language-cls">IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+<pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
 &quot;20200102023045-0600&quot;
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;)
 20200102023045
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;, &quot;HL7WithOffset&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045&quot;, &quot;America/New_York&quot;, &quot;America/Chicago&quot;, &quot;HL7WithOffset&quot;)
 &quot;20200102023045-0600&quot;
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;HL7Local&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;HL7Local&quot;)
 20200102023045
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;%Y-%m-%d %H:%M:%S %z&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;, &quot;&quot;, &quot;%Y-%m-%d %H:%M:%S %z&quot;)
 &quot;2020-01-02 02:30:45 -0600&quot;
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;&quot;, &quot;America/Chicago&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;&quot;, &quot;America/Chicago&quot;)
 &quot;&quot;
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;)
 20240102
 
-IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;, &quot;America/New_York&quot;)
+USER&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chicago&quot;, &quot;America/New_York&quot;)
 20240102
 </code></pre>
 <h4>Supported Input Formats:</h4>
@@ -161,7 +161,6 @@ IRISAPP&gt;zw ##class(tz.HL7).ConvertTz(&quot;20240102&quot;, &quot;America/Chic
   }
 
   set srcFmt = ""
-  set dstFmt = ""
   set dtLen = $LENGTH(datepart)
 
   if dtLen = 14 {
@@ -291,48 +290,109 @@ Returns 1 if an offset was found; 0 otherwise;</Description>
 ]]></Implementation>
 </Method>
 
-<UDLText name="T">
-<Content><![CDATA[
-// TODO: Rewrite/reorganize the below functions
-
-]]></Content>
-</UDLText>
-
 <Method name="WithOffset">
+<Description><![CDATA[
+<p><code>WithOffset()</code> converts HL7-formatted dates/datetimes to the desired timezone with a format of <code>YYYYMMDDHHMMSSÂ±zzzz</code>.</p>
+<p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on arguments, return values, formats, timezones, etc.</p>
+<h4>Examples:</h4>
+<pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).WithOffset(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+&quot;20200102023045-0600&quot;
+
+USER&gt;zw ##class(tz.HL7).WithOffset(&quot;20200102033045&quot;, &quot;America/Chicago&quot;)
+&quot;20200102033045-0600&quot;
+
+USER&gt;zw ##class(tz.HL7).WithOffset(&quot;20200102033045&quot;, &quot;America/Chicago&quot;, &quot;America/Denver&quot;)
+&quot;20200102023045-0700&quot;
+</code></pre>]]></Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>pDt,pTz,pSrcFormat="",pDestTz=""</FormalSpec>
+<FormalSpec>pDt,pTz,pDestTz:%String="",*pStatus="",pErrOutput:%String="{do not convert}",pStrict:%Boolean=0</FormalSpec>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[  quit ..ConvertTz(pDt, pTz, pSrcFormat, "HL7withOffset", pDestTz)
+<Implementation><![CDATA[  quit ..ConvertTz(pDt, pTz, pDestTz, "HL7WithOffset", .pStatus, pErrOutput, pStrict)
 ]]></Implementation>
 </Method>
 
 <Method name="ToLocal">
+<Description><![CDATA[
+<p><code>ToLocal()</code> converts HL7-formatted dates/datetimes to the desired timezone with a format of <code>YYYYMMDDHHMMSS</code>.</p>
+<p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on arguments, return values, formats, timezones, etc.</p>
+<h4>Examples:</h4>
+<pre><code class="language-cls">USER&gt; zw ##class(tz.HL7).ToLocal(&quot;20200102033045-0500&quot;, &quot;America/Chicago&quot;)
+20200102023045
+
+USER&gt;zw ##class(tz.HL7).ToLocal(&quot;20200102033045&quot;, &quot;America/Chicago&quot;)
+20200102033045
+
+USER&gt;zw ##class(tz.HL7).ToLocal(&quot;20200102033045&quot;, &quot;America/Chicago&quot;, &quot;America/Denver&quot;)
+20200102023045
+</code></pre>]]></Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>pDt,pTz,pSrcFormat="",pDestTz=""</FormalSpec>
+<FormalSpec>pDt,pTz,pDestTz:%String="",*pStatus="",pErrOutput:%String="{do not convert}",pStrict:%Boolean=0</FormalSpec>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[  quit ..ConvertTz(pDt, pTz, pSrcFormat, "HL7", pDestTz)
+<Implementation><![CDATA[  quit ..ConvertTz(pDt, pTz, pDestTz, "HL7Local", .pStatus, pErrOutput, pStrict)
 ]]></Implementation>
 </Method>
 
 <Method name="NowLocal">
+<Description><![CDATA[
+<p><code>NowLocal()</code> returns the current local time for the given timezone with a format of <code>YYYYMMDDHHMMSS</code>.</p>
+<p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on formats, timezones, etc.</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pTz</td>
+<td>The source timezone.</td>
+<td>&quot;America/New_York&quot;, &quot;America/Los_Angeles&quot;</td>
+</tr>
+</tbody></table>
+<h4>Examples:</h4>
+<pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).NowLocal(&quot;America/Chicago&quot;)
+&quot;20200102023045&quot;
+</code></pre>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>pTz</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
   set now = $ZDATETIME($HOROLOG, 3, 5)
   set srcFmt = "%Y-%m-%dT%H:%M:%S%z"
-  quit ..ToLocal(now, pTz, srcFmt, pTz)
+  quit ##class(tz.TZ).Convert(now, pTz, srcFmt, "%Y%m%d%H%M%S")
 ]]></Implementation>
 </Method>
 
 <Method name="NowWithOffset">
+<Description><![CDATA[
+<p><code>NowWithOffset()</code> returns the current time with an offset for the given timezone with a format of <code>YYYYMMDDHHMMSSÂ±zzzz</code> .</p>
+<p>See <code>##class(tz.HL7).ConvertTz()</code> for more details on formats, timezones, etc.</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pTz</td>
+<td>The source timezone.</td>
+<td>&quot;America/New_York&quot;, &quot;America/Los_Angeles&quot;</td>
+</tr>
+</tbody></table>
+<h4>Examples:</h4>
+<pre><code class="language-cls">USER&gt;zw ##class(tz.HL7).NowWithOffset(&quot;America/Chicago&quot;)
+&quot;20200102023045-0600&quot;
+</code></pre>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>pTz</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
   set now = $ZDATETIME($HOROLOG, 3, 5)
   set srcFmt = "%Y-%m-%dT%H:%M:%S%z"
-  quit ..WithOffset(now, pTz, srcFmt, pTz)
+  quit ##class(tz.TZ).Convert(now, pTz, srcFmt, "%Y%m%d%H%M%S%z")
 ]]></Implementation>
 </Method>
 </Class>
@@ -341,8 +401,8 @@ Returns 1 if an offset was found; 0 otherwise;</Description>
 <Class name="tz.TZ">
 <Description>
 TODO: Document</Description>
-<TimeChanged>67187,15769.409717604</TimeChanged>
-<TimeCreated>67180,25738.989209696</TimeCreated>
+<TimeChanged>67188,6254.239605498</TimeChanged>
+<TimeCreated>67188,6254.239605498</TimeCreated>
 
 <Method name="Test">
 <Description>
@@ -507,7 +567,7 @@ Description</Description>
     set fmtRslt = ..DetermineFormat(pDt, pSrcTz)
     set pSrcFormat = $LISTGET(fmtRslt, 1)
     set pSrcTz = $LISTGET(fmtRslt, 2)
-    set dateOnly = $LISTGET(fmtRslt, 3)
+    //set dateOnly = $LISTGET(fmtRslt, 3)
 
     // TODO: What if the input is only a date?
 
@@ -542,8 +602,8 @@ Description</Description>
 
 
 <Class name="tz.Tests">
-<TimeChanged>67187,30869.870541266</TimeChanged>
-<TimeCreated>67180,67510.539637908</TimeCreated>
+<TimeChanged>67188,13240.583817918</TimeChanged>
+<TimeCreated>67188,6254.248755286</TimeCreated>
 
 <Method name="Run">
 <Description>
@@ -821,6 +881,12 @@ Various Time/TZ Conversion Tests</Description>
     ..TestHL7ConvertTz("HL7.Strict.1c","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", ""             , "2020-01-02 02:30:45 -0600",, notStrict),
     ..TestHL7ConvertTz("HL7.Strict.1d","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "{{Date Parse ERROR}}","{{Date Parse ERROR}}", strict),
     ..TestHL7ConvertTz("HL7.Strict.1e","BAD:2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "{{Date Parse ERROR}}","{{Date Parse ERROR}}", notStrict),
+
+    ..TestHL7WithOffset("HL7.Offset.1", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", "20200102023045-0600"),
+    ..TestHL7WithOffset("HL7.Offset.2", "20200102033045"     , "America/New_York"   , "America/Chicago", "20200102023045-0600"),
+
+    ..TestHL7ToLocal("HL7.Local.1", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", "20200102023045"),
+    ..TestHL7ToLocal("HL7.Local.2", "20200102033045"     , "America/New_York"   , "America/Chicago", "20200102023045"),
   )
 
 
@@ -893,7 +959,7 @@ Various Time/TZ Conversion Tests</Description>
 <Implementation><![CDATA[
   set rslt = ##class(tz.HL7).ConvertTz(dt, inTz, outTz, outFmt, .tSC, pErrOutput, pStrict)
 
-  set scText = $System.Status.GetErrorText(tSC)
+  //set scText = $System.Status.GetErrorText(tSC)
   //set ok = ""
   //set statusStatus = ..expect(testId_".Status", scText, ok)
 
@@ -901,6 +967,26 @@ Various Time/TZ Conversion Tests</Description>
     //w "ERROR: ",scText,!
   }
 
+  return ..expect(testId, rslt, expectedValue)
+]]></Implementation>
+</Method>
+
+<Method name="TestHL7WithOffset">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testId,dt,inTz,outTz="",expectedValue="",pErrOutput:%String="{do not convert}",pStrict:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  set rslt = ##class(tz.HL7).WithOffset(dt, inTz, outTz, .tSC, pErrOutput, pStrict)
+  return ..expect(testId, rslt, expectedValue)
+]]></Implementation>
+</Method>
+
+<Method name="TestHL7ToLocal">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>testId,dt,inTz,outTz="",expectedValue="",pErrOutput:%String="{do not convert}",pStrict:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+  set rslt = ##class(tz.HL7).ToLocal(dt, inTz, outTz, .tSC, pErrOutput, pStrict)
   return ..expect(testId, rslt, expectedValue)
 ]]></Implementation>
 </Method>
@@ -952,8 +1038,8 @@ Various Time/TZ Conversion Tests</Description>
 
 
 <Class name="tz.internal">
-<TimeChanged>67187,1939.507312214</TimeChanged>
-<TimeCreated>67180,67866.463057633</TimeCreated>
+<TimeChanged>67188,6254.256464414</TimeChanged>
+<TimeCreated>67188,6254.256464414</TimeCreated>
 
 <Method name="convertTZ">
 <Internal>1</Internal>

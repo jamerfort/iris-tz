@@ -274,6 +274,12 @@ ClassMethod Run() As %Status
     ..TestHL7ConvertTz("HL7.Strict.1c","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", ""             , "2020-01-02 02:30:45 -0600",, notStrict),
     ..TestHL7ConvertTz("HL7.Strict.1d","2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "{{Date Parse ERROR}}","{{Date Parse ERROR}}", strict),
     ..TestHL7ConvertTz("HL7.Strict.1e","BAD:2020-01-02 03:30:45 -0500","America/New_York", "America/Chicago", "HL7WithOffset", "{{Date Parse ERROR}}","{{Date Parse ERROR}}", notStrict),
+
+    ..TestHL7WithOffset("HL7.Offset.1", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", "20200102023045-0600"),
+    ..TestHL7WithOffset("HL7.Offset.2", "20200102033045"     , "America/New_York"   , "America/Chicago", "20200102023045-0600"),
+
+    ..TestHL7ToLocal("HL7.Local.1", "20200102033045-0500", "America/Los_Angeles", "America/Chicago", "20200102023045"),
+    ..TestHL7ToLocal("HL7.Local.2", "20200102033045"     , "America/New_York"   , "America/Chicago", "20200102023045"),
   )
 
 
@@ -342,6 +348,18 @@ ClassMethod TestHL7ConvertTz(testId, dt, inTz, outTz, outFmt = "", expectedValue
     //w "ERROR: ",scText,!
   }
 
+  return ..expect(testId, rslt, expectedValue)
+}
+
+ClassMethod TestHL7WithOffset(testId, dt, inTz, outTz = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status
+{
+  set rslt = ##class(tz.HL7).WithOffset(dt, inTz, outTz, .tSC, pErrOutput, pStrict)
+  return ..expect(testId, rslt, expectedValue)
+}
+
+ClassMethod TestHL7ToLocal(testId, dt, inTz, outTz = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status
+{
+  set rslt = ##class(tz.HL7).ToLocal(dt, inTz, outTz, .tSC, pErrOutput, pStrict)
   return ..expect(testId, rslt, expectedValue)
 }
 
