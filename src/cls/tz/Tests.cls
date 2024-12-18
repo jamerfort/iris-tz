@@ -1,7 +1,8 @@
+/// This class currently provides all of the unit tests for this package.
 Class tz.Tests
 {
 
-/// Various Time/TZ Conversion Tests
+/// Run various Time/TZ conversion tests.
 ClassMethod Run() As %Status
 {
   set ok = "" 
@@ -316,13 +317,13 @@ ClassMethod Run() As %Status
   return $$$OK
 }
 
-ClassMethod TestInternal(testId, dt, inTz, inFmt, outFmt, outTz, expectedValue, altExpectedValue As %String = "") As %Status
+ClassMethod TestInternal(testId, dt, inTz, inFmt, outFmt, outTz, expectedValue, altExpectedValue As %String = "") As %Status [ Private ]
 {
   set rslt = ##class(tz.internal).convertTZ(dt, inTz, inFmt, outFmt, outTz)
   return ..expect(testId, rslt, expectedValue, altExpectedValue)
 }
 
-ClassMethod TestConvert(testId, dt, inTz, inFmt, outFmt, outTz, expectOK, expectedValue, altExpectedValue As %String = "") As %Status
+ClassMethod TestConvert(testId, dt, inTz, inFmt, outFmt, outTz, expectOK, expectedValue, altExpectedValue As %String = "") As %Status [ Private ]
 {
   set rslt = ##class(tz.TZ).Convert(dt, inTz, inFmt, outFmt, outTz, .tSC)
 
@@ -336,7 +337,7 @@ ClassMethod TestConvert(testId, dt, inTz, inFmt, outFmt, outTz, expectOK, expect
   return ..expect(testId, rslt, expectedValue, altExpectedValue)
 }
 
-ClassMethod TestHL7ConvertTz(testId, dt, inTz, outTz, outFmt = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status
+ClassMethod TestHL7ConvertTz(testId, dt, inTz, outTz, outFmt = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status [ Private ]
 {
   set rslt = ##class(tz.HL7).ConvertTz(dt, inTz, outTz, outFmt, .tSC, pErrOutput, pStrict)
 
@@ -351,13 +352,13 @@ ClassMethod TestHL7ConvertTz(testId, dt, inTz, outTz, outFmt = "", expectedValue
   return ..expect(testId, rslt, expectedValue)
 }
 
-ClassMethod TestHL7WithOffset(testId, dt, inTz, outTz = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status
+ClassMethod TestHL7WithOffset(testId, dt, inTz, outTz = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status [ Private ]
 {
   set rslt = ##class(tz.HL7).WithOffset(dt, inTz, outTz, .tSC, pErrOutput, pStrict)
   return ..expect(testId, rslt, expectedValue)
 }
 
-ClassMethod TestHL7ToLocal(testId, dt, inTz, outTz = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status
+ClassMethod TestHL7ToLocal(testId, dt, inTz, outTz = "", expectedValue = "", pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) As %Status [ Private ]
 {
   set rslt = ##class(tz.HL7).ToLocal(dt, inTz, outTz, .tSC, pErrOutput, pStrict)
   return ..expect(testId, rslt, expectedValue)
