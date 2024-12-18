@@ -1,6 +1,16 @@
+/// This class provides the core timezone conversion code.  These methods should not be called directly.
+/// 
+/// Use one of the following classes instead:
+/// 
+/// <ul>
+///   <li>tz.TZ</li>
+///   <li>tz.HL7</li>
+/// </ul>
 Class tz.internal
 {
 
+/// This is the core method that converts timezones/datetimes.  This is implemented in python without using any
+/// external packages.  Unfortunately, it only works for UNIX at the moment.
 ClassMethod convertTZ(pDt, pSrcTz, pSrcFormat, pDestFormat, pDestTz) As %String [ Internal, Language = python ]
 {
   # This uses time.tzset.  Unfortunately, this is not supported on Windows.
@@ -41,6 +51,7 @@ ClassMethod convertTZ(pDt, pSrcTz, pSrcFormat, pDestFormat, pDestTz) As %String 
   return rslt
 }
 
+/// Newer versions of python provide a zoneinfo module.  Eventually, we may be able to switch to this method/module.
 ClassMethod convertTZwithZoneInfo(pDt, pSrcTz, pSrcFormat, pDestFormat, pDestTz) As %String [ Internal, Language = python ]
 {
   # This really only works in more recent versions of python.

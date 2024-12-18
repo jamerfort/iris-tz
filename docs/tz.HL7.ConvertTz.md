@@ -2,7 +2,7 @@
 
 `ConvertTz()` converts HL7-formatted dates/datetimes to the desired timezone and/or format.
 
-### `##class(tz.HL7).ConvertTz()`(pDt, pTz, pDestTz="", pDestFormat As %String = "", Output pStatus As %Status, pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) as %String
+### `##class(tz.HL7).ConvertTz`(pDt, pTz, pDestTz="", pDestFormat As %String = "", Output pStatus As %Status, pErrOutput As %String = "{do not convert}", pStrict As %Boolean = 0) as %String
 
 
 #### Arguments:
