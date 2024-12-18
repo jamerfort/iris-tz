@@ -40,6 +40,12 @@ ClassMethod Run() As %Status
     ..TestConvert("Convert.1", "2020-01-02 03:30:45", "America/New_York", "%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600"),
     ..TestConvert("Convert.BlankDate", "", "America/New_York", "%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, ""),
 
+    ..TestConvert("Convert.ErrValue.1", "2020-01-02 03:30:45 -0500", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", ok, "01/02/2020 02:30:45 -0600", "", "{{Date Parse ERROR}}"),
+
+    ..TestConvert("Convert.ErrValue.2", "BAD2020-01-02 03:30:45 -0500", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", "ERROR #5001: Unable to determine source format: BAD2020-01-02 03:30:45 -0500", "BAD2020-01-02 03:30:45 -0500", "", "{do not convert}"),
+
+    ..TestConvert("Convert.ErrValue.3", "BAD2020-01-02 03:30:45 -0500", "America/New_York", "", "%m/%d/%Y %H:%M:%S %z", "America/Chicago", "ERROR #5001: Unable to determine source format: BAD2020-01-02 03:30:45 -0500", "{{Date Parse ERROR}}", "", "{{Date Parse ERROR}}"),
+
 
     ////*****************************************
     //// full date/time
@@ -323,9 +329,9 @@ ClassMethod TestInternal(testId, dt, inTz, inFmt, outFmt, outTz, expectedValue, 
   return ..expect(testId, rslt, expectedValue, altExpectedValue)
 }
 
-ClassMethod TestConvert(testId, dt, inTz, inFmt, outFmt, outTz, expectOK, expectedValue, altExpectedValue As %String = "") As %Status [ Private ]
+ClassMethod TestConvert(testId, dt, inTz, inFmt, outFmt, outTz, expectOK, expectedValue, altExpectedValue = "", pErrOutput As %String = "{do not convert}") As %Status [ Private ]
 {
-  set rslt = ##class(tz.TZ).Convert(dt, inTz, inFmt, outFmt, outTz, .tSC)
+  set rslt = ##class(tz.TZ).Convert(dt, inTz, inFmt, outFmt, outTz, .tSC, pErrOutput)
 
   set scText = $System.Status.GetErrorText(tSC)
   set statusStatus = ..expect(testId_".Status", scText, expectOK)
