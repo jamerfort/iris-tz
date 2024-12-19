@@ -35,6 +35,25 @@ You can convert any `Absolute Time` to a `Local Time` for any `timezone` you des
 
 This library will help you perform the conversions between various local times and absolute times.
 
+## tz.Ens (for Interoperability Rules/DTLs) Basic Usage 
+```cls
+// Convert local time from one timezone to another 	 
+set datetime = "20240102033045"
+set newDatetime = ##class(tz.Ens).TZ(datetime,"America/New_York","America/Chicago")
+
+// Convert local time to offset 	 
+set datetime = "20240102033045"
+set newDatetime = ##class(tz.Ens).TZOffset(datetime,"America/Chicago","America/New_York")
+
+// Convert offset to local time 	 
+set datetime = "20240102033045-0500"
+set newDatetime = ##class(tz.Ens).TZLocal(datetime,"America/Chicago")
+
+// Convert to a non-HL7 format 	 
+set datetime = "20240102033045-0500"
+set newDatetime = ##class(tz.Ens).TZ(datetime,"America/Chicago",,"%m/%d/%Y %H:%M:%S %z")
+```
+
 ## tz.HL7 Basic Usage
 ```cls
 // ConvertTz() Examples
@@ -125,7 +144,7 @@ Run tests from your iris terminal:
 ```cls
 // Built-in Tests
 USER>do ##class(tz.TZ).Test()
-109 Tests Successful!
+116 Tests Successful!
 
 // Experiment with the API
 USER>zw ##class(tz.HL7).ConvertTz("20240102033045-0500", "America/New_York")
@@ -231,6 +250,20 @@ If an input format is blank or not provided to the `##class(tz.TZ).Convert()` me
 - `%Y-%m-%d`
 - `%m/%d/%Y`
 
+## Ens (for Interoperability Rules/DTLs) Date/Datetime Conversion - `##class(tz.Ens)`
+
+The `tz.Ens` class provides several methods for converting HL7-formatted dates/datetimes to the desired timezone and/or format.  These methods are exposed to Interoperability Rules/DTLs:
+
+1. `TZ()` converts HL7-formatted dates/datetimes to the desired timezone and/or format.
+    - See [docs/tz.Ens.md](./docs/tz.Ens.md)
+
+2. `TZLocal()` converts HL7-formatted dates/datetimes to the desired local time.
+    - See [docs/tz.Ens.md](./docs/tz.Ens.md)
+
+3. `TZOffset()` converts HL7-formatted dates/datetimes to the desired datetime with timezone offset.
+    - See [docs/tz.Ens.md](./docs/tz.Ens.md)
+
+
 ## HL7 Date/Datetime Conversion - `##class(tz.HL7)`
 
 The `tz.HL7` class provides several methods for converting HL7-formatted dates/datetimes to the desired timezone and/or format:
@@ -249,5 +282,11 @@ The `tz.HL7` class provides several methods for converting HL7-formatted dates/d
 
 5. `NowWithOffset()` returns the current time with an offset for the given timezone with a format of `YYYYMMDDHHMMSS±zzzz`.
     - See [docs/tz.HL7.NowWithOffset.md](./docs/tz.HL7.NowWithOffset.md)
+
+## Base TZ Date/Datetime Conversion - `##class(tz.TZ)`
+
+The `tz.TZ` class provides the base `Convert()` method used by the other classes (such as `tz.HL7` and `tz.Ens`).  If the `tz.HL7` and `tz.Ens` classes do not provide the needed functionality, most likely, `##class(tz.TZ).Convert()` can be used to accomplish your goals.
+
+    - See [docs/tz.TZ.Convert.md](./docs/tz.TZ.Convert.md)
 
 
