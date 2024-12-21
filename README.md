@@ -8,6 +8,8 @@ An ObjectScript library for handling/converting time zones and timestamps in Int
 
 > Time zones are HARD!  Let's make them easy!!!
 
+To learn more about time zones, Daylight Savings Time, offsets and more, check out [Time Zones and Offsets and ObjectScript, Oh My!](./docs/Timezones_and_Offsets.md).
+
 ### InterSystems "Bringing Ideas to Reality" Contest
 This library was originally created/published for the [InterSystems "Bringing Ideas to Reality" Contest](https://community.intersystems.com/post/intersystems-bringing-ideas-reality-contest).
 
@@ -287,6 +289,6 @@ The `tz.HL7` class provides several methods for converting HL7-formatted dates/d
 
 The `tz.TZ` class provides the base `Convert()` method used by the other classes (such as `tz.HL7` and `tz.Ens`).  If the `tz.HL7` and `tz.Ens` classes do not provide the needed functionality, most likely, `##class(tz.TZ).Convert()` can be used to accomplish your goals.
 
-    - See [docs/tz.TZ.Convert.md](./docs/tz.TZ.Convert.md)
+See [docs/tz.TZ.Convert.md](./docs/tz.TZ.Convert.md)
 
 
