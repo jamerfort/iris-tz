@@ -74,13 +74,13 @@ Let's look at `Los Angeles`.
 
 On the map, the UTC offset for `Los Angeles` is `-8` in __Standard Time__.  Standard Time is typically followed during the winter months, whereas __Daylight Savings Time__ is typically followed during the summer months.
 
-[Daylight Savings Time (DST)](https://en.wikipedia.org/wiki/Daylight_saving_time) advances the clocks in a give time zone forward (typically by one hour).  There are several reasons that political regions might choose to follow DST (such as energy savings, better use of daylight, etc.).  The difficulty and complexity of Daylight Savings Time is that DST is not consistently followed around the world.  Depending on your location, your region may or may not follow DST.
+[Daylight Savings Time (DST)](https://en.wikipedia.org/wiki/Daylight_saving_time) advances the clocks in a give time zone forward (typically by one hour during the summer months).  There are several reasons that political regions might choose to follow DST (such as energy savings, better use of daylight, etc.).  The difficulty and complexity of Daylight Savings Time is that DST is not consistently followed around the world.  Depending on your location, your region may or may not follow DST.
 
 ## Time Zone Database
 
 Since the combination of political boundaries and Daylight Savings Time greatly increases the complexity of determining a specific time, a time zone database is needed to correctly map local times to specific times relative to UTC.  [The Internet Assigned Numbers Authority (IANA) Time Zone Database](https://www.iana.org/time-zones) is the common source of time zone information used by operating systems and programming languages.
 
-The database includes the names and alias of all time zones, information about the offset, information about the use of Daylight Savings Time, time zone abbreviations, and which date ranges the various rules apply.
+The database includes the names and aliases of all time zones, information about the offset, information about the use of Daylight Savings Time, time zone abbreviations, and which date ranges the various rules apply.
 
 Copies of and information about the time zone database can be found on [IANA's website](https://www.iana.org/time-zones).
 
@@ -88,7 +88,7 @@ Most UNIX systems have a copy of the database that gets updated with the operati
 
 ### Time Zone Names/Identifiers
 
-The time zone database [contains many names and aliases](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#) for specific time zones.  Many of the entries include a country (or conteninent) and major city in the name.  For example:
+The time zone database [contains many names and aliases](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#) for specific time zones.  Many of the entries include a country (or continent) and major city in the name.  For example:
 - America/New_York
 - America/Los_Angeles
 - Europe/Rome
@@ -108,11 +108,12 @@ Knowing this, how do we work with datetimes/time zones in ObjectScript?
 
 ### Built-in Variables and Functions
 
-If you need to convert timestamps between various formats within the system time zone of process running IRIS, the built-in features of ObjectScript should be sufficient.  Here is a brief listing of various time-related variables/functions in ObjectScript:
+If you need to convert timestamps between various formats within the system time zone of the process running IRIS, the built-in features of ObjectScript should be sufficient.  Here is a brief listing of various time-related variables/functions in ObjectScript:
 
 - $ZTIMESTAMP / $ZTS
   - IRIS Internal format as a UTC value (offset +0000).
   - Format: ddddd,sssss.fffffff
+
 
 - $NOW(tzmins)
   - Current system local time with the given `tzmins` offset from UTC.
@@ -120,20 +121,25 @@ If you need to convert timestamps between various formats within the system time
   - By default, tzmins is based off of the $ZTIMEZONE variable.
   - Format: ddddd,sssss.fffffff
 
+
 - $HOROLOG
   - Current system local time (based on $ZTIMEZONE), taking Daylight Savings Time into account.
   - Format: ddddd,sssss.fffffff
 
+
 - $ZTIMEZONE
   - Returns or sets the system's local UTC offset in minutes.
+
 
 - $ZDATETIME() / $ZDT()
   - Converts $HOROLOG format to a specific display format.
   - Can be used to convert from system local time to UTC (+0000).
 
+
 - $ZDATETIMEH() / $ZDTH()
   - Converts a datetime string to internal $HOROLOG format.
   - Can be used to convert from UTC (+0000) to system local time.
+
 
 As best as I can tell, these functions are only able to manipulate datetimes using the time zone of the local system.  There does not appear to be a way to work with arbitrary time zones in ObjectScript.
 
